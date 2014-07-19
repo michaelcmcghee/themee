@@ -60,28 +60,27 @@ class Themee_mcp {
 		<meta http-equiv="Expires" content="0" />');
 
 
-		$this->EE->cp->set_variable('cp_page_title', 
-								lang('themee_module_name'));
-		
+		//$this->EE->cp->set_variable('cp_page_title',  lang('themee_module_name'));
+		$this->EE->view->cp_page_title = lang('themee_module_name');
 		ee()->load->library('javascript');
-    ee()->load->helper('form');
-    ee()->load->library('table');
-    ee()->load->library('file_field');
-
-    ee()->view->cp_page_title = lang('ThemEE');
-
-    $vars['action_url'] = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee'.AMP.'method=index';
-    $vars['form_hidden'] = NULL;
-    $vars['files'] = array();
-		$logo = "logo";
-    $background = "background";
-    $button = "button";
-    $value = "";
-    $bg_value = "27343C";
-    $btn_value = "fc2e5a";
-    $file_value = "";
-    //additional informatioin for redirection after submission (slightly repeated)
-    $action_url = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee';
+	    ee()->load->helper('form');
+	    ee()->load->library('table');
+	    ee()->load->library('file_field');
+	
+	    ee()->view->cp_page_title = lang('ThemEE');
+	
+	    $vars['action_url'] = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee'.AMP.'method=index';
+	    $vars['form_hidden'] = NULL;
+	    $vars['files'] = array();
+			$logo = "logo";
+	    $background = "background";
+	    $button = "button";
+	    $value = "";
+	    $bg_value = "27343C";
+	    $btn_value = "fc2e5a";
+	    $file_value = "";
+	    //additional informatioin for redirection after submission (slightly repeated)
+	    $action_url = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee';
 		$attributes = array('class' => 'themee-form', 'id' => 'index');
 		
 		//poll the db for themee table
@@ -178,7 +177,7 @@ class Themee_mcp {
 					    ));
 			
 		//open the login css file for writing	
-	  $file = "themes/cp_themes/default/css/login.css";
+	  $file = "../themes/cp_themes/default/css/login.css";
 	  $current = file_get_contents($file);
 		
 		$results = ee()->db->get('themee');
@@ -259,7 +258,7 @@ else{
 					    
 					    
 					    
-	$file = "themes/cp_themes/default/css/login.css";
+	$file = "../themes/cp_themes/default/css/login.css";
 	$current = file_get_contents($file);
 		
 		$results = ee()->db->get('themee');
