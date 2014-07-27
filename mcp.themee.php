@@ -81,20 +81,23 @@ class Themee_mcp {
 	    $file_value = "";
 	    //additional informatioin for redirection after submission (slightly repeated)
 	    $action_url = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee';
-		$attributes = array('class' => 'themee-form', 'id' => 'index');
-		
+			$attributes = array('class' => 'themee-form', 'id' => 'index');
+			$themesDir = PATH_THEMES;
+			
+
 		//poll the db for themee table
 		$results = ee()->db->get('themee');
-		
-	    $bg_value = ($results->row('background_css')) ? $results->row('background_css') : "";
-	    $btn_value = ($results->row('button_css')) ? $results->row('button_css') : "";
-	    $file_value = ($results->row('file_name')) ? $results->row('file_name') : "";
-	    
+
+
+
 	    if ($results->num_rows() > 0){
-	    
-	    //find the actual directory name of the uploaded logo 
-		  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.dir_id=exp_upload_prefs.id");
-			$result = mysql_fetch_assoc($query);
+		    $bg_value = ($results->row('background_css')) ? $results->row('background_css') : $bg_value;
+		    $btn_value = ($results->row('button_css')) ? $results->row('button_css') : $btn_value;
+		    $file_value = ($results->row('file_name')) ? $results->row('file_name') : $file_value;
+		    
+		    //find the actual directory name of the uploaded logo 
+			  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.dir_id=exp_upload_prefs.id");
+				$result = mysql_fetch_assoc($query);
 			
 			//current editing
 			
@@ -111,22 +114,22 @@ class Themee_mcp {
 			}else{
 				$filepath = "";
 			}
-    }
+    }else{
+		   
+		    
+	    }
     
 		//check for a set value, if set use the post, else use the value in the database
-	  $bg_value = (isset($_POST['background'])) ? $_POST['background'] : $results->row('background_css');
-	  $btn_value = (isset($_POST['button'])) ? $_POST['button'] : $results->row('button_css');
+		$bg_value = (isset($_POST['background'])) ? $_POST['background'] :$bg_value;
+	  $btn_value = (isset($_POST['button'])) ? $_POST['button'] : $btn_value;
+
 	  
 	  
-	  if($results->row('file_name') != ""){
-		   $file_value = (isset($_POST['logo_hidden_dir'])) ? "{filedir_".$_POST['logo_hidden_dir']."}".$_POST['logo_hidden_file'] : $results->row('file_name');
+	  if($results->row('file_name') != "" || $results->row('file_name') != "{filedir_}"){
+		   $file_value = (!empty($_POST['logo_hidden_dir'])) ? "{filedir_".$_POST['logo_hidden_dir']."}".$_POST['logo_hidden_file'] : $results->row('file_name');
 	  }
 	  
 
-
-		
-
-    
     $vars['options'] = array('edit' => lang('edit_selected'), 'delete' => lang('delete_selected'));
     ee()->file_field->browser($endpoint_url="");
 
@@ -138,6 +141,8 @@ class Themee_mcp {
     
     //load table items
     ee()->table->set_heading('Setting', 'Value');    
+    
+   
 		ee()->table->add_row("Logo Image",ee()->file_field->field($logo, $data=$file_value, $allowed_file_dirs = 'all', $content_type = 'all'));
 		ee()->table->add_row("Background Color", form_input($background, $bg_value));
 		ee()->table->add_row("Button Color", form_input($button, $btn_value));
@@ -177,7 +182,7 @@ class Themee_mcp {
 					    ));
 			
 		//open the login css file for writing	
-	  $file = "../themes/cp_themes/default/css/login.css";
+	  $file = $themesDir."cp_themes/default/css/login.css";
 	  $current = file_get_contents($file);
 		
 		$results = ee()->db->get('themee');
@@ -258,7 +263,7 @@ else{
 					    
 					    
 					    
-	$file = "../themes/cp_themes/default/css/login.css";
+	$file = $themesDir."cp_themes/default/css/login.css";
 	$current = file_get_contents($file);
 		
 		$results = ee()->db->get('themee');
@@ -317,7 +322,7 @@ else{
 		
 		//var_dump($background, $button, $logoName, $logoDirectory);
 	
-		return $form.ee()->table->generate()."<input type='submit' value='submit'/> <script>$(document).ready(function(){
+		return $form.ee()->table->generate()."<input type='submit' value='Submit'/> <script>$(document).ready(function(){
 
 	
 		$('.mainTable input[type=text]').colpick({
