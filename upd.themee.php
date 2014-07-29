@@ -64,17 +64,20 @@ class Themee_upd {
 		
 		
 		$fields = array(
-	    'file_id'   => array('type' => 'int', 'constraint' => '10', 'unsigned' => TRUE, 'auto_increment' => TRUE),
-	    'dir_id'    => array('type' => 'int', 'constraint'  => '4'),
-	    'file_name' => array('type' => 'varchar', 'constraint' => '250'),
-	    'file_title'    => array('type' => 'varchar', 'constraint' => '250', 'null' => TRUE, 'default' => NULL),
+	    'logo_id'   => array('type' => 'int', 'constraint' => '10', 'unsigned' => TRUE, 'auto_increment' => TRUE),
+	    'logo_dir_id'    => array('type' => 'int', 'constraint'  => '4'),
+	    'logo_file_name' => array('type' => 'varchar', 'constraint' => '250'),
+	    'logo_file_title'    => array('type' => 'varchar', 'constraint' => '250', 'null' => TRUE, 'default' => NULL),
+	    'bckg_dir_id'    => array('type' => 'int', 'constraint'  => '4'),
+	    'bckg_file_name' => array('type' => 'varchar', 'constraint' => '250'),
+	    'bckg_file_title'    => array('type' => 'varchar', 'constraint' => '250', 'null' => TRUE, 'default' => NULL),
 	    'member_access' => array('type' => 'varchar', 'constraint' => '250', 'default' => 'all'),
 	    'background_css' => array('type' => 'varchar', 'constraint' => '250', 'default' => NULL),
 			'button_css' => array('type' => 'varchar', 'constraint' => '250', 'default' => NULL)
     );
 
 		ee()->dbforge->add_field($fields);
-		ee()->dbforge->add_key('file_id', TRUE);
+		ee()->dbforge->add_key('logo_id', TRUE);
 		
 		ee()->dbforge->create_table('themee');
 		
@@ -105,7 +108,6 @@ class Themee_upd {
 		$this->EE->db->where('module_name', 'Themee')
 					 ->delete('modules');
 		
-		// $this->EE->load->dbforge();
 		// Delete your custom tables & any ACT rows 
 		// you have in the actions table
 		

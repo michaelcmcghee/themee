@@ -27,11 +27,11 @@
 class Themee_ext {
 	
 	public $settings 		= array();
-	public $description		= 'Replaces themes and stuff';
+	public $description		= 'Replaces login theme and adds a little flavor to the CMS';
 	public $docs_url		= 'http://papercutinteractive.com';
 	public $name			= 'ThemEE';
 	public $settings_exist	= 'n';
-	public $version			= '1.0';
+	public $version			= '0.8';
 	
 	private $EE;
 	
@@ -99,13 +99,23 @@ class Themee_ext {
 			$btn_value = (isset($_POST['button'])) ? $_POST['button'] : $results->row('button_css');
     }
 		
+		
+		//CMS css modifications
 		$data .="#activeUser,.submit,table.mainTable th.headerSortUp, table.mainTable th.headerSortDown,#navigationTabs li li.hover,#navigationTabs li li.hover, #navigationTabs ul li li.hover,#navigationTabs li li.parent:focus,
 #navigationTabs li li.parent.active,#navigationTabs li li.parent:focus > a,
 #navigationTabs li li.parent.active > a,#navigationTabs li li.parent:focus > a:after,
 #navigationTabs li li.parent.active > a:after {background: #".$bg_value." !important }
 						#breadCrumb li.last,#navigationTabs li #addQuickTab, #navigationTabs li #addQuickTab:link,#navigationTabs li a.first_level:hover,#activeUser a:link, #activeUser a:visited,.pageContents span.button .submit, 
 span.button .submit{color: #".$btn_value." !important }
-#navigationTabs li li.parent:focus > a:after, #navigationTabs li li.parent.active > a:after{border: none !important}";
+#navigationTabs li li.parent:focus > a:after, #navigationTabs li li.parent.active > a:after{border: none !important}
+#navigationTabs li a.first_level, #navigationTabs li a.first_level:link, #navigationTabs li a.first_level:visited{background-image: none;}
+#navigationTabs li.active a.first_level, #navigationTabs li:active a.first_level, #navigationTabs li a.first_level:hover{background-image: none; background-color: #".$bg_value." !important}
+#navigationTabs li a.first_level:hover{background-image: none;}
+";
+		
+		
+
+		
 		
 		return $data;
 	}
@@ -122,7 +132,6 @@ span.button .submit{color: #".$btn_value." !important }
 	{
 
 	$data.= "";
-	//$data.= NL .'alert("asdf")';
 	return $data;
 		// Add Code for the cp_js_end hook here.  
 	}

@@ -73,13 +73,15 @@ class Themee_mcp {
 	    $vars['form_hidden'] = NULL;
 	    $vars['files'] = array();
 			$logo = "logo";
+			$bckg = "backg";
 	    $background = "background";
 	    $button = "button";
 	    $value = "";
 	    $bg_value = "27343C";
 	    $btn_value = "fc2e5a";
 	    $file_value = "";
-	    //additional informatioin for redirection after submission (slightly repeated)
+	    $bck_img = "";
+	    //additional information for redirection after submission (slightly repeated)
 	    $action_url = 'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=themee';
 			$attributes = array('class' => 'themee-form', 'id' => 'index');
 			$themesDir = PATH_THEMES;
@@ -88,31 +90,33 @@ class Themee_mcp {
 		//poll the db for themee table
 		$results = ee()->db->get('themee');
 
-
-
 	    if ($results->num_rows() > 0){
 		    $bg_value = ($results->row('background_css')) ? $results->row('background_css') : $bg_value;
 		    $btn_value = ($results->row('button_css')) ? $results->row('button_css') : $btn_value;
-		    $file_value = ($results->row('file_name')) ? $results->row('file_name') : $file_value;
+		    $file_value = ($results->row('logo_file_name')) ? $results->row('logo_file_name') : $file_value;
+		    $bck_img = ($results->row('bckg_file_name')) ? $results->row('bckg_file_name') : $bck_img;
 		    
 		    //find the actual directory name of the uploaded logo 
-			  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.dir_id=exp_upload_prefs.id");
+			  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.logo_dir_id=exp_upload_prefs.id");
 				$result = mysql_fetch_assoc($query);
 			
 			//current editing
 			
 			if(mysql_num_rows($query) > 0){
+				//if there are files in the database, check them and get the file urls like so
 				$filedir = $result['url'];
-				
-				
 				$pattern = '/{filedir_[0-9]}/i'; 
 				$replace = "";
-				$real_file_name =  preg_replace($pattern, $replace, $file_value);
+				$real_logo_file_name =  preg_replace($pattern, $replace, $file_value);
+				$real_bckg_file_name =  preg_replace($pattern, $replace, $bck_img);
 				
 				//put it together for the css
-				$filepath = $filedir."a".$real_file_name;
+				$filepath = $filedir.$real_logo_file_name;
+				$filepathbg = $filedir.$real_bckg_file_name;
 			}else{
+				//nothing is in the database yet, so put blanks in 
 				$filepath = "";
+				$filepathbg = "";
 			}
     }else{
 		   
@@ -122,13 +126,15 @@ class Themee_mcp {
 		//check for a set value, if set use the post, else use the value in the database
 		$bg_value = (isset($_POST['background'])) ? $_POST['background'] :$bg_value;
 	  $btn_value = (isset($_POST['button'])) ? $_POST['button'] : $btn_value;
-
 	  
 	  
-	  if($results->row('file_name') != "" || $results->row('file_name') != "{filedir_}"){
-		   $file_value = (!empty($_POST['logo_hidden_dir'])) ? "{filedir_".$_POST['logo_hidden_dir']."}".$_POST['logo_hidden_file'] : $results->row('file_name');
+	  if($results->row('logo_file_name') != "" || $results->row('logo_file_name') != "{filedir_}"){
+		   $file_value = (!empty($_POST['logo_hidden_dir'])) ? "{filedir_".$_POST['logo_hidden_dir']."}".$_POST['logo_hidden_file'] : $results->row('logo_file_name');
 	  }
 	  
+	  if($results->row('bckg_file_name') != "" || $results->row('bckg_file_name') != "{filedir_}"){
+		   $bck_img = (!empty($_POST['backg_hidden_dir'])) ? "{filedir_".$_POST['backg_hidden_dir']."}".$_POST['backg_hidden_file'] : $results->row('bckg_file_name');
+	  }
 
     $vars['options'] = array('edit' => lang('edit_selected'), 'delete' => lang('delete_selected'));
     ee()->file_field->browser($endpoint_url="");
@@ -142,21 +148,23 @@ class Themee_mcp {
     //load table items
     ee()->table->set_heading('Setting', 'Value');    
     
-   
 		ee()->table->add_row("Logo Image",ee()->file_field->field($logo, $data=$file_value, $allowed_file_dirs = 'all', $content_type = 'all'));
 		ee()->table->add_row("Background Color", form_input($background, $bg_value));
-		ee()->table->add_row("Button Color", form_input($button, $btn_value));
+		ee()->table->add_row("Tiled Background Image",ee()->file_field->field($bckg, $data=$bck_img, $allowed_file_dirs = 'all', $content_type = 'all'));
+		ee()->table->add_row("Button/Label Color", form_input($button, $btn_value));
 		
 		//generate form tags
-		$form = form_open($action_url, $attributes, $logo);
+		$form = form_open($action_url, $attributes, $logo, $bckg);
 		
-		//themee submission		
-		if(isset($_POST['logo_hidden_file']) && isset($_POST['logo_hidden_dir'])){
+		//themee submission - wat?
+		if(isset($_POST['logo_hidden_file']) && isset($_POST['logo_hidden_dir']) || isset($_POST['backg_hidden_file']) && isset($_POST['backg_directory'])){
 			
 			//post values
 			$background = ee()->input->post('background');
 			$button = ee()->input->post('button');
 			$logoDirectory = ee()->input->post('logo_directory');
+			$bckgDirectory = ee()->input->post('backg_directory');
+			
 			
 			if($_POST['logo_hidden_dir'] != 0 && $_POST['logo_hidden_file'] != ""){
 				$logoName ="{filedir_".$logoDirectory."}". ee()->input->post('logo_hidden_file');
@@ -164,19 +172,24 @@ class Themee_mcp {
 				$logoName ="";
 			}
 			
-			//var_dump($_POST);
+			if($_POST['backg_hidden_dir'] != 0 && $_POST['backg_hidden_dir'] != ""){
+				$bckgName ="{filedir_".$bckgDirectory."}". ee()->input->post('backg_hidden_file');
+			}else{
+				$bckgName ="";
+			}
+
+			$results = ee()->db->select('logo_file_name')->get('themee');
+			$results2 = ee()->db->select('bckg_file_name')->get('themee');
 			
-			$results = ee()->db->select('file_name')->get('themee');
-			
-			if ($results->num_rows() > 0)
-			{
-				
+			if ($results->num_rows() > 0 || $results2->num_rows() > 0){
 				//update the database table 
 				ee()->db->update(
 					    'themee',
 					    array(
-					        'file_name'  => $logoName,
-					        'dir_id' => $logoDirectory,
+					        'logo_file_name'  => $logoName,
+					        'logo_dir_id' => $logoDirectory,
+					        'bckg_file_name'  => $bckgName,
+					        'bckg_dir_id' => $bckgDirectory,
 					        'button_css'   => $button,
 					        'background_css'=> $background
 					    ));
@@ -190,7 +203,7 @@ class Themee_mcp {
     if ($results->num_rows() > 0){
 	    
 	    //find the actual directory name of the uploaded logo 
-		  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.dir_id=exp_upload_prefs.id");
+		  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.logo_dir_id=exp_upload_prefs.id");
 			$result = mysql_fetch_assoc($query);
 			
 			//current editing
@@ -200,27 +213,38 @@ class Themee_mcp {
 				
 				$pattern = '/{filedir_[0-9]}/i'; 
 				$replace = "";
-				$real_file_name =  preg_replace($pattern, $replace, $file_value);
+				$real_logo_file_name =  preg_replace($pattern, $replace, $file_value);
+				$real_bckg_file_name =  preg_replace($pattern, $replace, $bck_img);
 				
 				//put it together for the css
-				$filepath = $filedir.$real_file_name;
+				$filepath = $filedir.$real_logo_file_name;
+				$bckgpath = $filedir.$real_bckg_file_name;
 			}else{
 				$filepath = "";
+				$bckgpath = "";
 			}
     }
 		
 		//modifications that are appended to the login.css file
-		$data= "		
+		$data= "
 			body {
-				background-color:	#".$bg_value." !important;
+				/*background-color:	#".$bg_value." !important;*/
+				background: #".$bg_value." url('".$bckgpath."')  repeat center top !important;
 			}
 			
 			#content  {
-				background:	url('".$filepath."') no-repeat center top !important;
+				background:	url('".$filepath."') no-repeat center 2em !important;
 				-webkit-background-size: 75%;
 		    -moz-background-size: 75%;
 		    -o-background-size: 75%;
 		    background-size: 75%;
+		    padding: 200px 40px 5px 20px;
+		    margin: 50px auto 0 auto;
+		    padding-bottom: 2.5em;
+			}
+			
+			#content dt, #content label{
+				color:				#".$btn_value." !important;
 			}
 			
 			form {
@@ -248,15 +272,19 @@ class Themee_mcp {
 			$current .= $data;
 			file_put_contents($file, $current);
 								
+			
 			}
-else{
+			else{
+				
 			//insert the default values if not posting
 				
 						ee()->db->insert(
 					    'themee',
 					    array(
-					        'file_name'  => $logoName,
-					        'dir_id' => $logoDirectory,
+					        'logo_file_name'  => $logoName,
+					        'logo_dir_id' => $logoDirectory,
+					        'bckg_file_name'  => $bckgName,
+					        'bckg_dir_id' => $bckgDirectory,
 					        'button_css'   => $button,
 					        'background_css'=> $background
 					    ));
@@ -268,25 +296,35 @@ else{
 		
 		$results = ee()->db->get('themee');
 
-    if ($results->num_rows() > 0){
+    if ($results->num_rows() > 0 || $results2->num_rows() > 0){
 
 	    $bg_value = ($results->row('background_css')) ? $results->row('background_css') : "";
 	    $btn_value = ($results->row('button_css')) ? $results->row('button_css') : "";
-	    $file_value = ($results->row('file_name')) ? $results->row('file_name') : "";
+	    $file_value = ($results->row('logo_file_name')) ? $results->row('logo_file_name') : "";
+		  $bck_img = ($results->row('bckg_file_name')) ? $results->row('bckg_file_name') : ""; 
    }
 	 	
 	 	
 		$data.= "		
 			body {
-				background-color:	#".$bg_value." !important;
+				/*background-color:	#".$bg_value." !important;*/
+				background: #".$bg_value." url('".$bck_img."')  repeat center top !important;
 			}
 			
 			#content  {
-				background:	url('".$file_value."') no-repeat center top !important;
+				background:	url('".$file_value."') no-repeat center 2em !important;
 				-webkit-background-size: 75%;
 		    -moz-background-size: 75%;
 		    -o-background-size: 75%;
 		    background-size: 75%;
+		    padding: 200px 40px 5px 20px;
+		    margin: 50px auto 0 auto;
+		    padding-bottom: 2.5em;
+
+			}
+			
+			#content dt, #content label{
+				color:				#".$btn_value." !important;
 			}
 			
 			form {
@@ -312,6 +350,7 @@ else{
 				
 			$current .= $data;
 			file_put_contents($file, $current);    
+			
 			}
 		}
 
@@ -322,7 +361,7 @@ else{
 		
 		//var_dump($background, $button, $logoName, $logoDirectory);
 	
-		return $form.ee()->table->generate()."<input type='submit' value='Submit'/> <script>$(document).ready(function(){
+		return $form.ee()->table->generate()."<input class='btn' type='submit' value='Submit'/> <script>$(document).ready(function(){
 
 	
 		$('.mainTable input[type=text]').colpick({
