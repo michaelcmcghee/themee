@@ -118,10 +118,7 @@ class Themee_mcp {
 				$filepath = "";
 				$filepathbg = "";
 			}
-    }else{
-		   
-		    
-	    }
+    }
     
 		//check for a set value, if set use the post, else use the value in the database
 		$bg_value = (isset($_POST['background'])) ? $_POST['background'] :$bg_value;
@@ -228,7 +225,6 @@ class Themee_mcp {
 		//modifications that are appended to the login.css file
 		$data= "
 			body {
-				/*background-color:	#".$bg_value." !important;*/
 				background: #".$bg_value." url('".$bckgpath."')  repeat center top !important;
 			}
 			
@@ -266,6 +262,7 @@ class Themee_mcp {
 			
 			input.submit {
 				background:			#".$btn_value." !important;
+				color:			#".$bg_value." !important;
 			}";
 				
 			
@@ -307,7 +304,6 @@ class Themee_mcp {
 	 	
 		$data.= "		
 			body {
-				/*background-color:	#".$bg_value." !important;*/
 				background: #".$bg_value." url('".$bck_img."')  repeat center top !important;
 			}
 			
@@ -346,6 +342,7 @@ class Themee_mcp {
 			
 			input.submit {
 				background:			#".$btn_value." !important;
+				color:			#".$bg_value." !important;
 			}";
 				
 			$current .= $data;
@@ -353,34 +350,28 @@ class Themee_mcp {
 			
 			}
 		}
-
-
-
-		
-
-		
-		//var_dump($background, $button, $logoName, $logoDirectory);
 	
-		return $form.ee()->table->generate()."<input class='btn' type='submit' value='Submit'/> <script>$(document).ready(function(){
-
-	
-		$('.mainTable input[type=text]').colpick({
-		layout:'hex',
-		submit:0,
-		colorScheme:'dark',
-		onChange:function(hsb,hex,rgb,el,bySetColor) {
-			$(el).css('border-color','#'+hex);
-			// Fill the text box just if the color was set using the picker, and not the colpickSetColor function.
-			if(!bySetColor) $(el).val(hex);
-		}
-		}).keyup(function(){
-			$(this).colpickSetColor(this.value);
-		});
+		return $form.ee()->table->generate()."<input class='submit' type='submit' value='Submit'/> 
 		
-			$('.mainTable input[type=text]').each(function(){
-		    if($(this).val())
-		        $(this).css('border-color', '#'+$(this).val())
-		});
+		<script>
+		$(document).ready(function(){
+			$('.mainTable input[type=text]').colpick({
+			layout:'hex',
+			submit:0,
+			colorScheme:'dark',
+			onChange:function(hsb,hex,rgb,el,bySetColor) {
+				$(el).css('border-color','#'+hex);
+				// Fill the text box just if the color was set using the picker, and not the colpickSetColor function.
+				if(!bySetColor) $(el).val(hex);
+			}
+			}).keyup(function(){
+				$(this).colpickSetColor(this.value);
+			});
+			
+				$('.mainTable input[type=text]').each(function(){
+			    if($(this).val())
+			        $(this).css('border-color', '#'+$(this).val())
+			});
 
 		});
 		</script>";  

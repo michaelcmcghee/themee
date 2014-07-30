@@ -104,13 +104,19 @@ class Themee_ext {
 		$data .="#activeUser,.submit,table.mainTable th.headerSortUp, table.mainTable th.headerSortDown,#navigationTabs li li.hover,#navigationTabs li li.hover, #navigationTabs ul li li.hover,#navigationTabs li li.parent:focus,
 #navigationTabs li li.parent.active,#navigationTabs li li.parent:focus > a,
 #navigationTabs li li.parent.active > a,#navigationTabs li li.parent:focus > a:after,
-#navigationTabs li li.parent.active > a:after {background: #".$bg_value." !important }
+#navigationTabs li li.parent.active > a:after {background: #".$bg_value." !important; }
 						#breadCrumb li.last,#navigationTabs li #addQuickTab, #navigationTabs li #addQuickTab:link,#navigationTabs li a.first_level:hover,#activeUser a:link, #activeUser a:visited,.pageContents span.button .submit, 
-span.button .submit{color: #".$btn_value." !important }
+span.button .submit{color: #".$btn_value." !important; }
 #navigationTabs li li.parent:focus > a:after, #navigationTabs li li.parent.active > a:after{border: none !important}
 #navigationTabs li a.first_level, #navigationTabs li a.first_level:link, #navigationTabs li a.first_level:visited{background-image: none;}
-#navigationTabs li.active a.first_level, #navigationTabs li:active a.first_level, #navigationTabs li a.first_level:hover{background-image: none; background-color: #".$bg_value." !important}
+#navigationTabs li.active a.first_level, #navigationTabs li:active a.first_level, #navigationTabs li a.first_level:hover{background-image: none; background-color: #".$bg_value." !important; }
 #navigationTabs li a.first_level:hover{background-image: none;}
+#breadCrumb li{ background: none; }
+#breadCrumb a:hover { color: #".$bg_value." !important;  }
+#breadCrumb li.last{ color: #".$bg_value." !important;  }
+#navigationTabs li #addQuickTab:hover{ border-radius: 10px; -webkit-border-radius: 10px; padding: 3px 8px 4px 8px;}
+
+
 ";
 		
 		
@@ -131,7 +137,17 @@ span.button .submit{color: #".$btn_value." !important }
 	public function add_js($data)
 	{
 
-	$data.= "";
+	$data.= "
+	
+		$('#breadCrumb').find('li').each(function( index ) {
+  	$(this).append(' &#187; ')
+	});
+	
+	
+	";
+	
+
+	
 	return $data;
 		// Add Code for the cp_js_end hook here.  
 	}
