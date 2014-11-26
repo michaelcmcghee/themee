@@ -117,13 +117,8 @@ span.button .submit{color: #".$btn_value." !important; }
 #navigationTabs li #addQuickTab:hover{ border-radius: 10px; -webkit-border-radius: 10px; padding: 3px 8px 4px 8px;}
 table.mainTable .headerSortUp{border-left:1px solid #".$bg_value." !important;}
 table.mainTable th.headerSortDown{border-left:1px solid #".$bg_value." !important;}
-
 ";
-		
-		
-
-		
-		
+	
 		return $data;
 	}
 
@@ -139,12 +134,10 @@ table.mainTable th.headerSortDown{border-left:1px solid #".$bg_value." !importan
 	{
 
 	$data.= "
-		
+	Added 	
 	$('#breadCrumb').find('li').each(function( index ) {
 		$(this).append(' &#187;');
 	});
-	
-	
 	";
 	
 
