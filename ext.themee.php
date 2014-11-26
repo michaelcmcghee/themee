@@ -139,9 +139,9 @@ table.mainTable th.headerSortDown{border-left:1px solid #".$bg_value." !importan
 	{
 
 	$data.= "
-	
-		$('#breadCrumb').find('li').each(function( index ) {
-  	$(this).append(' &#187; ')
+		
+	$('#breadCrumb').find('li').each(function( index ) {
+		$(this).append(' &#187;');
 	});
 	
 	
