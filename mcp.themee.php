@@ -97,14 +97,14 @@ class Themee_mcp {
 		    $bck_img = ($results->row('bckg_file_name')) ? $results->row('bckg_file_name') : $bck_img;
 		    
 		    //find the actual directory name of the uploaded logo 
-			  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.logo_dir_id=exp_upload_prefs.id");
-				$result = mysql_fetch_assoc($query);
-			
+			 $result = ee()->db->select('exp_upload_prefs.url')->from('exp_themee')->join('exp_upload_prefs', 'exp_themee.logo_dir_id=exp_upload_prefs.id')->get();
 			//current editing
 			
-			if(mysql_num_rows($query) > 0){
+			if($result->num_rows() > 0){
+				$result = $result->result_array();
+				
 				//if there are files in the database, check them and get the file urls like so
-				$filedir = $result['url'];
+				$filedir = $result[0]['url'];
 				$pattern = '/{filedir_[0-9]}/i'; 
 				$replace = "";
 				$real_logo_file_name =  preg_replace($pattern, $replace, $file_value);
@@ -200,13 +200,13 @@ class Themee_mcp {
     if ($results->num_rows() > 0){
 	    
 	    //find the actual directory name of the uploaded logo 
-		  $query = mysql_query("SELECT exp_upload_prefs.url FROM exp_themee LEFT JOIN exp_upload_prefs ON exp_themee.logo_dir_id=exp_upload_prefs.id");
-			$result = mysql_fetch_assoc($query);
-			
+		  $result = ee()->db->select('exp_upload_prefs.url')->from('exp_themee')->join('exp_upload_prefs', 'exp_themee.logo_dir_id=exp_upload_prefs.id')->get();
+						
 			//current editing
 			
 			if(!empty($filedir)){
-				$filedir = $result['url'];
+				$result = $result->result_array();
+				$filedir = $result[0]['url'];
 				
 				$pattern = '/{filedir_[0-9]}/i'; 
 				$replace = "";
