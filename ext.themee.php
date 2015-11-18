@@ -133,8 +133,7 @@ table.mainTable th.headerSortDown{border-left:1px solid #".$bg_value." !importan
 	public function add_js($data)
 	{
 
-	$data.= "
-	Added 	
+	$data.= " 	
 	$('#breadCrumb').find('li').each(function( index ) {
 		$(this).append(' &#187;');
 	});
